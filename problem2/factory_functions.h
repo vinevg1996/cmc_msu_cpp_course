@@ -11,12 +11,12 @@
 
 class TFactory {
     class TImpl;
-    std::unique_ptr<const TImpl> Impl;
+    std::shared_ptr<const TImpl> Impl;
 
 public:
     TFactory();
     ~TFactory();
-    std::unique_ptr<TFunction> CreateObject(const std::string& n, const std::any &parameters = nullptr);
+    std::shared_ptr<TFunction> CreateObject(const std::string& n, const std::any &parameters = nullptr);
     std::vector<std::string> GetAvailableObjects() const;
 };
 

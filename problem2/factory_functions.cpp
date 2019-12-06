@@ -1,5 +1,6 @@
 #include <map>
 #include <any>
+#include <memory>
 
 #include "factory_functions.h"
 #include "basic_function.h"
@@ -8,8 +9,7 @@ class TFactory::TImpl {
     class ICreator {
     public:
         virtual ~ICreator(){}
-        virtual std::unique_ptr<TFunction> Create(const std::any &parameters) const = 0;
-        //virtual std::unique_ptr<TFunction> Create(double value) const = 0;
+        virtual std::shared_ptr<TFunction> Create(const std::any &parameters) const = 0;
     };
 
     using TCreatorPtr = std::shared_ptr<ICreator>;
@@ -21,8 +21,8 @@ public:
 
     template <typename TCurrentObject>
     class TCreator: public ICreator {
-        std::unique_ptr<TFunction> Create(const std::any &parameters) const override {
-            return std::make_unique<TCurrentObject>(parameters);
+        std::shared_ptr<TFunction> Create(const std::any &parameters) const override {
+            return std::make_shared<TCurrentObject>(parameters);
         }
     };
 
@@ -43,7 +43,7 @@ public:
         RegisterCreator<PolynomialFunc>("poly function");
     }
 
-    std::unique_ptr<TFunction> CreateObject(const std::string& n, const std::any &parameters) const {
+    std::shared_ptr<TFunction> CreateObject(const std::string& n, const std::any &parameters) const {
         auto creator = RegisteredCreators.find(n);
         if (creator == RegisteredCreators.end()) {
             return nullptr;
@@ -62,12 +62,12 @@ public:
 
 };
 
-std::unique_ptr<TFunction> TFactory::CreateObject(const std::string& n, const std::any &parameters) {
+std::shared_ptr<TFunction> TFactory::CreateObject(const std::string& n, const std::any &parameters) {
     return Impl->CreateObject(n, parameters);
 }
 
 TFactory::TFactory() 
-    : Impl(std::make_unique<TFactory::TImpl>()) {}
+    : Impl(std::make_shared<TFactory::TImpl>()) {}
 
 TFactory::~TFactory(){}
 

@@ -7,25 +7,38 @@
 #include <cmath>
 #include <vector>
 #include <string>
+#include <memory>
 #include <any>
+
+class TFunctionPlus;
+class TFunctionMinus;
+class TFunctionMult;
+class TFunctionDiv;
 
 class TFunction {
 public:
     TFunction() {}
     virtual double operator()(double x) const = 0;
-    virtual void ToString() const = 0;
+    virtual std::string ToString() const = 0;
+    virtual double GetDerive(double x) const = 0;
+
+    friend TFunctionPlus operator+(const std::shared_ptr<TFunction> &left, 
+                                   const std::shared_ptr<TFunction> &right);
+    friend TFunctionMinus operator-(const std::shared_ptr<TFunction> &left, 
+                                    const std::shared_ptr<TFunction> &right);
+    friend TFunctionMult operator*(const std::shared_ptr<TFunction> &left, 
+                                   const std::shared_ptr<TFunction> &right);
+    friend TFunctionDiv operator/(const std::shared_ptr<TFunction> &left, 
+                                  const std::shared_ptr<TFunction> &right);
 };
 
 class IdentFunc: public TFunction {
 
 public:
     IdentFunc(const std::any &parameters);
-    virtual double operator()(double x) const override {
-        std::cout << "f(" << x  << ") = " << x << std::endl;
-        //std::cerr << __FILE__ << " " << __LINE__ << std::endl;
-    }
-    virtual void ToString() const override;
-
+    virtual double operator()(double x) const override;
+    virtual std::string ToString() const override;
+    virtual double GetDerive(double x) const override;
 };
 
 class ConstFunc: public TFunction {
@@ -33,11 +46,9 @@ class ConstFunc: public TFunction {
 
 public:
     ConstFunc(const std::any &parameters);
-    virtual double operator()(double x) const override {
-        std::cout << "f(" << x  << ") = " << value << std::endl;
-        //std::cerr << __FILE__ << " " << __LINE__ << std::endl;
-    }
-    virtual void ToString() const override;
+    virtual double operator()(double x) const override;
+    virtual std::string ToString() const override;
+    virtual double GetDerive(double x) const override;
 };
 
 class PowerFunc: public TFunction {
@@ -45,22 +56,17 @@ class PowerFunc: public TFunction {
 
 public:
     PowerFunc(const std::any &parameters);
-    virtual double operator()(double x) const override {
-        double power_of_func = std::pow(x, power);
-        std::cout << "f(" << x  << ") = " << power_of_func << std::endl;
-        //std::cerr << __FILE__ << " " << __LINE__ << std::endl;
-    }
-    virtual void ToString() const override;
+    virtual double operator()(double x) const override;
+    virtual std::string ToString() const override;
+    virtual double GetDerive(double x) const override;
 };
 
 class ExpFunc: public TFunction {
 public:
     ExpFunc(const std::any &parameters);
-    virtual double operator()(double x) const override {
-        std::cout << "f(" << x  << ") = " << exp(x) << std::endl;
-        //std::cerr << __FILE__ << " " << __LINE__ << std::endl;
-    }
-    virtual void ToString() const override;
+    virtual double operator()(double x) const override;
+    virtual std::string ToString() const override;
+    virtual double GetDerive(double x) const override;
 };
 
 class PolynomialFunc: public TFunction {
@@ -68,17 +74,61 @@ class PolynomialFunc: public TFunction {
 
 public:
     PolynomialFunc(const std::any &parameters);
-    virtual double operator()(double x) const override {
-        double sum = 0;
-        double curr_power_x;
-        for (int curr_coef = 0; curr_coef < coef.size(); ++curr_coef) {
-            curr_power_x = std::pow(x, curr_coef);
-            sum = sum + coef[curr_coef] * curr_power_x;
-        }
-        std::cout << "f(" << x  << ") = " << sum << std::endl;
-        //std::cerr << __FILE__ << " " << __LINE__ << std::endl;
-    }
-    virtual void ToString() const override;
+    virtual double operator()(double x) const override;
+    virtual std::string ToString() const override;
+    virtual double GetDerive(double x) const override;
 };
+
+class TFunctionPlus: public TFunction {
+    std::shared_ptr<TFunction> func1;
+    std::shared_ptr<TFunction> func2;
+
+public:
+    TFunctionPlus(const std::shared_ptr<TFunction> &func1,
+                  const std::shared_ptr<TFunction> &func2);
+    virtual double operator()(double x) const override;
+    virtual std::string ToString() const override;
+    virtual double GetDerive(double x) const override;
+};
+
+class TFunctionMinus: public TFunction {
+    std::shared_ptr<TFunction> func1;
+    std::shared_ptr<TFunction> func2;
+
+public:
+    TFunctionMinus(const std::shared_ptr<TFunction> &func1,
+                   const std::shared_ptr<TFunction> &func2);
+    virtual double operator()(double x) const override;
+    virtual std::string ToString() const override;
+    virtual double GetDerive(double x) const override;
+};
+
+class TFunctionMult: public TFunction {
+    std::shared_ptr<TFunction> func1;
+    std::shared_ptr<TFunction> func2;
+
+public:
+    TFunctionMult(const std::shared_ptr<TFunction> &func1,
+                  const std::shared_ptr<TFunction> &func2);
+    virtual double operator()(double x) const override;
+    virtual std::string ToString() const override;
+    virtual double GetDerive(double x) const override;
+};
+
+class TFunctionDiv: public TFunction {
+    std::shared_ptr<TFunction> func1;
+    std::shared_ptr<TFunction> func2;
+
+public:
+    TFunctionDiv(const std::shared_ptr<TFunction> &func1,
+                 const std::shared_ptr<TFunction> &func2);
+    virtual double operator()(double x) const override;
+    virtual std::string ToString() const override;
+    virtual double GetDerive(double x) const override;
+};
+
+double Calculate_function_root(const std::shared_ptr<TFunction> &func,
+                               double initial_value,
+                               int iter_number);
 
 #endif
