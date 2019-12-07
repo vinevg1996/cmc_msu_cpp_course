@@ -51,12 +51,19 @@ int main() {
     std::cout << test_div_func(3) << std::endl;
     
     double Calculate_function_root(const std::shared_ptr<TFunction> &func,
-                               double initial_value,
-                               int iter_number);
+                                   double initial_value,
+                                   int iter_number);
 
     
     auto poly_func2 = factory.CreateObject("poly function", std::vector<int>({1, -2, 1}));    
     
+    auto ptr = power_func + exp_func;
+    std::cout << "__________________" << std::endl;
+    std::cout << ptr.ToString() << std::endl;
+    std::cout << ptr(3) << std::endl;
+
+    //auto ptr1 = power_func + "abc";
+    std::cout << "__________________" << std::endl;
     double root = Calculate_function_root(poly_func2, -2, 10);
 
     std::cout << "root = " << root << std::endl;

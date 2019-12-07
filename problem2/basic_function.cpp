@@ -212,23 +212,47 @@ double TFunctionDiv::GetDerive(double x) const {
 
 // operators
 TFunctionPlus operator+(const std::shared_ptr<TFunction> &left, 
-                        const std::shared_ptr<TFunction> &right) {
-    return TFunctionPlus(left, right);
+                        const std::any &right) {
+    std::shared_ptr<TFunction> right_arg;
+    try {
+        right_arg = std::any_cast<std::shared_ptr<TFunction>>(right);
+    } catch(std::bad_cast& e) {
+        throw std::logic_error("showd be: shared_ptr<TFunction> + shared_ptr<TFunction>");
+    }
+    return TFunctionPlus(left, right_arg);
 }
 
 TFunctionMinus operator-(const std::shared_ptr<TFunction> &left, 
-                         const std::shared_ptr<TFunction> &right) {
-    return TFunctionMinus(left, right);
+                         const std::any &right) {
+    std::shared_ptr<TFunction> right_arg;
+    try {
+        right_arg = std::any_cast<std::shared_ptr<TFunction>>(right);
+    } catch(std::bad_cast& e) {
+        throw std::logic_error("showd be: shared_ptr<TFunction> + shared_ptr<TFunction>");
+    }
+    return TFunctionMinus(left, right_arg);
 }
 
 TFunctionMult operator*(const std::shared_ptr<TFunction> &left, 
-                        const std::shared_ptr<TFunction> &right) {
-    return TFunctionMult(left, right);
+                        const std::any &right) {
+    std::shared_ptr<TFunction> right_arg;
+    try {
+        right_arg = std::any_cast<std::shared_ptr<TFunction>>(right);
+    } catch(std::bad_cast& e) {
+        throw std::logic_error("showd be: shared_ptr<TFunction> + shared_ptr<TFunction>");
+    }
+    return TFunctionMult(left, right_arg);
 }
 
 TFunctionDiv operator/(const std::shared_ptr<TFunction> &left, 
-                       const std::shared_ptr<TFunction> &right) {
-    return TFunctionDiv(left, right);
+                       const std::any &right) {
+    std::shared_ptr<TFunction> right_arg;
+    try {
+        right_arg = std::any_cast<std::shared_ptr<TFunction>>(right);
+    } catch(std::bad_cast& e) {
+        throw std::logic_error("showd be: shared_ptr<TFunction> + shared_ptr<TFunction>");
+    }
+    return TFunctionDiv(left, right_arg);
 }
 
 double Calculate_function_root(const std::shared_ptr<TFunction> &func,

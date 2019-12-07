@@ -23,13 +23,13 @@ public:
     virtual double GetDerive(double x) const = 0;
 
     friend TFunctionPlus operator+(const std::shared_ptr<TFunction> &left, 
-                                   const std::shared_ptr<TFunction> &right);
+                                   const std::any &right);
     friend TFunctionMinus operator-(const std::shared_ptr<TFunction> &left, 
-                                    const std::shared_ptr<TFunction> &right);
+                                    const std::any &right);
     friend TFunctionMult operator*(const std::shared_ptr<TFunction> &left, 
-                                   const std::shared_ptr<TFunction> &right);
+                                   const std::any &right);
     friend TFunctionDiv operator/(const std::shared_ptr<TFunction> &left, 
-                                  const std::shared_ptr<TFunction> &right);
+                                  const std::any &right);
 };
 
 class IdentFunc: public TFunction {
