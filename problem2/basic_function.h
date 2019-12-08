@@ -22,14 +22,14 @@ public:
     virtual std::string ToString() const = 0;
     virtual double GetDerive(double x) const = 0;
 
-    friend TFunctionPlus operator+(const std::shared_ptr<TFunction> &left, 
-                                   const std::any &right);
-    friend TFunctionMinus operator-(const std::shared_ptr<TFunction> &left, 
-                                    const std::any &right);
-    friend TFunctionMult operator*(const std::shared_ptr<TFunction> &left, 
-                                   const std::any &right);
-    friend TFunctionDiv operator/(const std::shared_ptr<TFunction> &left, 
-                                  const std::any &right);
+    friend std::shared_ptr<TFunctionPlus> operator+(const std::shared_ptr<TFunction> &left, 
+                                   					const std::any &right);
+    friend std::shared_ptr<TFunctionMinus> operator-(const std::shared_ptr<TFunction> &left, 
+                                    				 const std::any &right);
+    friend std::shared_ptr<TFunctionMult> operator*(const std::shared_ptr<TFunction> &left, 
+                                   					const std::any &right);
+    friend std::shared_ptr<TFunctionDiv> operator/(const std::shared_ptr<TFunction> &left, 
+                                  				   const std::any &right);
 };
 
 class IdentFunc: public TFunction {

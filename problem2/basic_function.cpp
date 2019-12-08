@@ -7,7 +7,7 @@
 // IdentFunc
 IdentFunc::IdentFunc(const std::any &parameters) 
         : TFunction() {
-    std::cout << "IdentFunc" << std::endl;
+    //std::cout << "IdentFunc" << std::endl;
 }
 
 double IdentFunc::operator()(double x) const {
@@ -23,6 +23,7 @@ double IdentFunc::GetDerive(double x) const {
 }
 
 // ConstFunc
+// pro-prof.com/forums/topic/constructor_destructor_exceptions
 ConstFunc::ConstFunc(const std::any &parameters) 
         : TFunction() {
     try {
@@ -31,7 +32,7 @@ ConstFunc::ConstFunc(const std::any &parameters)
         int int_value = std::any_cast<int>(parameters);
         this->value = static_cast<double>(int_value);
     }
-    std::cout << "ConstFunc" << std::endl;
+    //std::cout << "ConstFunc" << std::endl;
 }
 
 double ConstFunc::operator()(double x) const {
@@ -55,7 +56,7 @@ PowerFunc::PowerFunc(const std::any &parameters)
         int int_value = std::any_cast<int>(parameters);
         this->power = static_cast<double>(int_value);
     }
-    std::cout << "PowerFunc" << std::endl;
+    //std::cout << "PowerFunc" << std::endl;
 }
 
 double PowerFunc::operator()(double x) const {
@@ -75,7 +76,7 @@ double PowerFunc::GetDerive(double x) const {
 // ExpFunc
 ExpFunc::ExpFunc(const std::any &parameters) 
         : TFunction() {
-    std::cout << "ExpFunc" << std::endl;
+    //std::cout << "ExpFunc" << std::endl;
 }
 
 std::string ExpFunc::ToString() const {
@@ -102,7 +103,7 @@ PolynomialFunc::PolynomialFunc(const std::any &parameters)
         }
     }
     
-    std::cout << "PolyFunc" << std::endl;
+    //std::cout << "PolyFunc" << std::endl;
 }
 
 double PolynomialFunc::operator()(double x) const {
@@ -199,6 +200,9 @@ TFunctionDiv::TFunctionDiv(const std::shared_ptr<TFunction> &func1,
         , func2(func2) {}
 
 double TFunctionDiv::operator()(double x) const {
+    if ((*func2)(x) == 0) {
+    	throw std::logic_error("divizion on zero");
+    }
     return (*func1)(x) / (*func2)(x);
 }
 
@@ -211,40 +215,40 @@ double TFunctionDiv::GetDerive(double x) const {
 }
 
 // operators
-TFunctionPlus operator+(const std::shared_ptr<TFunction> &left, 
-                        const std::any &right) {
+std::shared_ptr<TFunctionPlus> operator+(const std::shared_ptr<TFunction> &left, 
+                        				 const std::any &right) {
     std::shared_ptr<TFunction> right_arg;
     try {
         right_arg = std::any_cast<std::shared_ptr<TFunction>>(right);
     } catch(std::bad_cast& e) {
         throw std::logic_error("showd be: shared_ptr<TFunction> + shared_ptr<TFunction>");
     }
-    return TFunctionPlus(left, right_arg);
+    return std::make_shared<TFunctionPlus>(TFunctionPlus(left, right_arg));
 }
 
-TFunctionMinus operator-(const std::shared_ptr<TFunction> &left, 
-                         const std::any &right) {
+std::shared_ptr<TFunctionMinus> operator-(const std::shared_ptr<TFunction> &left, 
+                         				  const std::any &right) {
     std::shared_ptr<TFunction> right_arg;
     try {
         right_arg = std::any_cast<std::shared_ptr<TFunction>>(right);
     } catch(std::bad_cast& e) {
         throw std::logic_error("showd be: shared_ptr<TFunction> + shared_ptr<TFunction>");
     }
-    return TFunctionMinus(left, right_arg);
+    return std::make_shared<TFunctionMinus>(TFunctionMinus(left, right_arg));
 }
 
-TFunctionMult operator*(const std::shared_ptr<TFunction> &left, 
-                        const std::any &right) {
+std::shared_ptr<TFunctionMult> operator*(const std::shared_ptr<TFunction> &left, 
+                        				 const std::any &right) {
     std::shared_ptr<TFunction> right_arg;
     try {
         right_arg = std::any_cast<std::shared_ptr<TFunction>>(right);
     } catch(std::bad_cast& e) {
         throw std::logic_error("showd be: shared_ptr<TFunction> + shared_ptr<TFunction>");
     }
-    return TFunctionMult(left, right_arg);
+    return std::make_shared<TFunctionMult>(TFunctionMult(left, right_arg));
 }
 
-TFunctionDiv operator/(const std::shared_ptr<TFunction> &left, 
+std::shared_ptr<TFunctionDiv> operator/(const std::shared_ptr<TFunction> &left, 
                        const std::any &right) {
     std::shared_ptr<TFunction> right_arg;
     try {
@@ -252,7 +256,7 @@ TFunctionDiv operator/(const std::shared_ptr<TFunction> &left,
     } catch(std::bad_cast& e) {
         throw std::logic_error("showd be: shared_ptr<TFunction> + shared_ptr<TFunction>");
     }
-    return TFunctionDiv(left, right_arg);
+    return std::make_shared<TFunctionDiv>(TFunctionDiv(left, right_arg));
 }
 
 double Calculate_function_root(const std::shared_ptr<TFunction> &func,

@@ -46,7 +46,8 @@ public:
     std::shared_ptr<TFunction> CreateObject(const std::string& n, const std::any &parameters) const {
         auto creator = RegisteredCreators.find(n);
         if (creator == RegisteredCreators.end()) {
-            return nullptr;
+            throw std::logic_error("we can create only ident function, const function, power function, exp function and poly function");
+            //return nullptr;
         } else {
             return creator->second->Create(parameters);
         }
