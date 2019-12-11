@@ -1,9 +1,7 @@
 #include <iostream>
 #include <vector>
-
-int count_arr = 0;
-int count_arr_copy = 0;
-int count_arr_del = 0;
+#include <memory>
+#include <utility>
 
 template <typename T>
 class Array {
@@ -12,29 +10,48 @@ private:
     size_t size;
 
 public:
-    Array(size_t n = 0)
-        : size(n)
-    {
+    Array(size_t n = 0) 
+        : size(0) 
+        , data(nullptr) {}
+
+    Array(size_t n, T x) 
+            : size(n) {
         data = new T[n];
-    }
-
-    Array(const Array &arr)
-    {
-//      Copy constructor overload
-        size = arr.size;
-        data = new T[size];
-        for (int i = 0; i < arr.size; ++i) {
-            data[i] = arr.data[i];
+        for (size_t i = 0; i != n; ++i) {
+            data[i] = x;
         }
     }
+    
+    Array(const Array &arr) = delete;
+    const Array& operator=(const Array &arr) = delete;
 
-    const Array& operator=(const Array &arr){
-//      Operator= overload
-        size = arr.size;
-        data = new T[size];
-        for (int i = 0; i < arr.size; ++i) {
-            data[i] = arr.data[i];
+    Array(Array &&arr)
+            : size(arr.size)
+            , data(arr.data) {
+        //std::cerr << __FILE__ << " " << __LINE__ << std::endl;
+        arr.data = nullptr;
+        arr.size = 0;
+    }
+
+    Array& operator=(Array &&arr){
+        //std::cerr << __FILE__ << " " << __LINE__ << std::endl;
+        if (&arr == this) {
+            return *this;
         }
+        //this->~Array();
+        if (data) {
+        	delete[] data;
+        	size = 0;
+        	data = nullptr;
+        }
+        data = arr.data;
+        size = arr.size;
+        //std::swap(arr.data, data);
+        //std::swap(arr.size, size);
+        
+        arr.data = nullptr;
+        arr.size = 0;
+        //return std::move(*this);
         return *this;
     }
 
@@ -55,16 +72,18 @@ public:
     }
 
     ~Array() {
-        delete[] data;
+        if (data) {
+            //std::cerr << __FILE__ << " " << __LINE__ << std::endl;
+            delete[] data;
+            data = nullptr;
+            size = 0;
+        }
     }
 };
 
 template <typename T>
-const Array<T> GetArray(size_t n, T x) {
-    Array<T> A(n);
-    for (size_t i = 0; i != n; ++i) {
-        A[i] = x;
-    }
+Array<T> GetArray(size_t n, T x) {
+    Array<T> A(n, x);
     return A;
 }
 
@@ -83,14 +102,17 @@ int main() {
     Array<int> A(n);
     A = GetArray<int>(n, 0);
     // print the array
+    std::cout << "size = " << A.GetSize() << "\n";
     std::cout << A << "\n";
-
+    
     std::vector<Array<int>> vec;
     Array<int> B(n);
     // fill vector of 100 arrays 
     for (size_t i = 0; i < 100; ++i) {
         B = GetArray<int>(n, i);
-        vec.push_back(B);
-        //std::cout << vec[i] << "\n";
+        vec.push_back(std::move(B));
+        //std::cout << vec[i];
     }
+    
+    return 0;
 }
