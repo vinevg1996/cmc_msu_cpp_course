@@ -61,13 +61,15 @@ namespace bintree {
         // конструктор TNode перенесён из private в public,
         // чтобы вызов make_shared сработал
         static TNodePtr createLeaf(T v) {
-            return std::make_shared<TNode>(v);
+            //return std::make_shared<TNode>(v);
+            return std::shared_ptr<TNode>(new TNode(v));
         }
 
         // Изменены типы входных параметров
         // Теперь вместо сырых указателей -- "умные"
         static TNodePtr fork(T v, TNodePtr left, TNodePtr right) {
-            TNodePtr ptr = std::make_shared<TNode>(v, left, right);
+            //TNodePtr ptr = std::make_shared<TNode>(v, left, right);
+            TNodePtr ptr = std::shared_ptr<TNode>(new TNode(v, left, right));
             setParent(ptr->getLeft(), ptr);
             setParent(ptr->getRight(), ptr);
             return ptr;
@@ -75,8 +77,8 @@ namespace bintree {
 
         // Поправлена работа с this с помощью конструкции shared_from_this
         TNodePtr replaceLeft(TNodePtr l) {
-            //setParent(l, shared_from_this());
-            setParent(l, std::enable_shared_from_this<TNode<T>>::shared_from_this());
+            //setParent(l, std::enable_shared_from_this<TNode<T>>::shared_from_this());
+            setParent(l, this->shared_from_this());
             setParent(left, nullptr);
             std::swap(l, left);
             return l;
@@ -84,8 +86,8 @@ namespace bintree {
 
         // Поправлена работа с this с помощью конструкции shared_from_this
         TNodePtr replaceRight(TNodePtr r) {
-            //setParent(r, shared_from_this());
-            setParent(r, std::enable_shared_from_this<TNode<T>>::shared_from_this());
+            //setParent(r, std::enable_shared_from_this<TNode<T>>::shared_from_this());
+            setParent(r, this->shared_from_this());
             setParent(right, nullptr);
             std::swap(r, right);
             return r;
@@ -105,8 +107,8 @@ namespace bintree {
         TNodePtr removeRight() {
             return replaceRight(nullptr);
         }
-
-        TNode(T v)
+/*
+		TNode(T v)
             : value(v) {}
         
         // сырые указатели заменены на "умные"
@@ -116,13 +118,22 @@ namespace bintree {
             : value(v)
             , left(left)
             , right(right) {}
-
+*/
     private:
         T value;
         TNodePtr left = nullptr;
         TNodePtr right = nullptr;
         // Чтобы избежать циклических ссылок, используем weak_ptr
         TWeakPtr parent = TWeakPtr();
+
+        TNode(T v)
+            : value(v) {}
+        
+        // сырые указатели заменены на "умные"
+        TNode(T v, TNodePtr left, TNodePtr right)
+            : value(v)
+            , left(left)
+            , right(right) {}
 
         static void setParent(TNodePtr node, TNodePtr parent) {
             if (node)
