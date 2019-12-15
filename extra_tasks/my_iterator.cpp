@@ -7,9 +7,11 @@
 #include "my_iterator.h"
 
 //TRange::const_iterator
-TRange::const_iterator::const_iterator(std::shared_ptr<int> p, int step) 
+TRange::const_iterator::const_iterator(std::shared_ptr<int> p, int step, int N, int M) 
         : p(p)
-        , step(step) {}
+        , step(step)
+        , N(N)
+        , M(M) {}
 
 TRange::const_iterator::const_iterator(const const_iterator &it)
         : p(it.p) 
@@ -28,7 +30,11 @@ int64_t TRange::const_iterator::operator*() const {
 }
 
 TRange::const_iterator TRange::const_iterator::operator++() {
-    p = std::make_shared<int>(*p + step);
+    if (N < M) {
+        p = std::make_shared<int>(*p + step);
+    } else {
+        p = std::make_shared<int>(*p - step);
+    }
     return *this;
 }
 
@@ -91,12 +97,17 @@ void TRange::GetAllIntegers() const {
 
 TRange::const_iterator TRange::begin() const {
     std::shared_ptr<int> begin_ptr = std::make_shared<int>(N);
-    return TRange::const_iterator(begin_ptr, s);
+    return TRange::const_iterator(begin_ptr, s, N, M);
 }
 
 TRange::const_iterator TRange::end() const {
-    std::shared_ptr<int> end_ptr = std::make_shared<int>(N + size * s);
-    return TRange::const_iterator(end_ptr, s);
+    if (N < M) {
+        std::shared_ptr<int> end_ptr = std::make_shared<int>(N + size * s);
+        return TRange::const_iterator(end_ptr, s, N, M);
+    } else {
+        std::shared_ptr<int> end_ptr = std::make_shared<int>(N - size * s);
+        return TRange::const_iterator(end_ptr, s, N, M);
+    }
 }
 
 //TRangeHash

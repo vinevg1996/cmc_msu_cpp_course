@@ -17,8 +17,10 @@ public:
     class const_iterator {
         std::shared_ptr<int> p;
         int step;
+        int64_t N;
+    	int64_t M;
 
-        const_iterator(std::shared_ptr<int> p, int step);
+        const_iterator(std::shared_ptr<int> p, int step, int N, int M);
 
     public:
         using iterator_category = std::forward_iterator_tag;

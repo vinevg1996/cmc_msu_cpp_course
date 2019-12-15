@@ -19,4 +19,4 @@ add_executable(runTests main.cpp)
 
 target_link_libraries(runTests my_iterator)
 
-#target_link_libraries(runTests ${GTEST_LIBRARIES} pthread)
+target_link_libraries(runTests ${GTEST_LIBRARIES} pthread)
